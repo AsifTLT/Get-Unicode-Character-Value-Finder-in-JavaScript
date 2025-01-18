@@ -1,0 +1,30 @@
+name: Email Notification
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, closed]
+
+jobs:
+  send_email:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Send Email Notification
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: GitHub Repository Update Notification
+        body: |
+          🎉 A new event has occurred in your repository!
+          - Repository: ${{ github.repository }}
+          - Event: ${{ github.event_name }}
+          - Committer: ${{ github.actor }}
+          - Commit Message: ${{ github.event.head_commit.message }}
+        to: recipient@example.com
+        from: ${{ secrets.EMAIL_USERNAME }}

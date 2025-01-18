@@ -1,0 +1,24 @@
+name: Slack Notification
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, closed]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Send Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      with:
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        message: |
+          🎉 A new event has occurred in your repository!
+          - Repository: ${{ github.repository }}
+          - Event: ${{ github.event_name }}
+          - Committer: ${{ github.actor }}
+          - Commit Message: ${{ github.event.head_commit.message }}

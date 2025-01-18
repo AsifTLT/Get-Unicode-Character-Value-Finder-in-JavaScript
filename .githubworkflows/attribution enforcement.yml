@@ -1,0 +1,39 @@
+name: Attribution Enforcement
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  enforce-license:
+    runs-on: ubuntu-latest
+    steps:
+      # কোড চেকআউট করা
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # LICENSE ফাইল চেক করা
+      - name: Check LICENSE file
+        run: |
+          if [ ! -f LICENSE ]; then
+            echo "❌ LICENSE file is missing! Please add the LICENSE file to comply with attribution rules."
+            exit 1
+          fi
+
+      # README.md ফাইলে মালিকানার নাম চেক করা
+      - name: Check README attribution
+        run: |
+          if ! grep -q "Md Asif" README.md; then
+            echo "❌ Attribution is missing in README.md! Please mention the project owner."
+            exit 1
+          fi
+
+  notify-on-failure:
+    needs: enforce-license
+    runs-on: ubuntu-latest
+    steps:
+      # ফেইল নোটিফিকেশন পাঠানো
+      - name: Notify user on failure
+        run: echo "⚠️ Attribution rules violated! Please fix the issues."
